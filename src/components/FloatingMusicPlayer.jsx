@@ -11,15 +11,7 @@ export default function FloatingMusicPlayer({ playing, setPlaying }) {
   const track = musicPlaylist[currentTrack];
 
   const togglePlay = () => {
-    if (!audioRef.current) return;
-
-    if (playing) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
-    }
-
-    setPlaying(!playing);
+    setPlaying((prev) => !prev);
   };
 
   const nextSong = () => {
@@ -36,14 +28,28 @@ export default function FloatingMusicPlayer({ playing, setPlaying }) {
   };
 
   useEffect(() => {
-    if (!audioRef.current) return;
+    const audio = audioRef.current;
 
-    audioRef.current.load();
+    if (!audio) return;
+
+    audio.load();
 
     if (playing) {
-      audioRef.current.play();
+      audio.play().catch(console.error);
     }
-  }, [currentTrack, playing]);
+  }, [currentTrack]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+
+    if (!audio) return;
+
+    if (playing) {
+      audio.play().catch(console.error);
+    } else {
+      audio.pause();
+    }
+  }, [playing]);
 
   useEffect(() => {
     const audio = audioRef.current;
